@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "483460245150",
+    "project_id": "smartenergi-7425c",
+    "storage_bucket": "smartenergi-7425c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483460245150:android:26a8a48dcc031cecb7bd8f",
+        "android_client_info": {
+          "package_name": "com.example.smartenergi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1KG32Ki-Mqkk2Hs1ZiJGbVX0MFJUvjbY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
