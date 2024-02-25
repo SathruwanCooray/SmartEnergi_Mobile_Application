@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smartenergi/Firebase_Functions/firestore_functions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smartenergi/Pages/deviceDashboard_page.dart';
 import 'package:smartenergi/Pages/profile_page.dart';
 import 'package:smartenergi/Pages/signin_page.dart';
+import 'package:smartenergi/Firebase_Functions/firestore_functions.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,6 +16,48 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<String> devices = [];
   TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    getDevicesFromFirebase();
+  }
+
+  Future<void> getDevicesFromFirebase() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String userUid = user.uid;
+
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final CollectionReference userSettings =
+          firestore.collection('User-Settings');
+      final CollectionReference espDevices =
+          firestore.collection("ESP-Devices");
+
+      try {
+        DocumentSnapshot userSnapshot = await userSettings.doc(userUid).get();
+
+        if (userSnapshot.exists) {
+          Map<String, dynamic>? userData =
+              userSnapshot.data() as Map<String, dynamic>?;
+
+          if (userData != null && userData.containsKey('Hardware_ID')) {
+            String hardwareId = userData['Hardware_ID'];
+
+            QuerySnapshot devicesSnapshot =
+                await espDevices.doc(hardwareId).collection('Devices').get();
+
+            setState(() {
+              devices = devicesSnapshot.docs.map((doc) => doc.id).toList();
+            });
+            print(devices);
+          }
+        }
+      } catch (error) {
+        print(error);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +188,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (deviceName.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Please enter a device name.'),
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        'Please enter a device name.',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                            fontSize: 20),
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
+
                 } else {
                   await _addDevice(deviceName);
                   _textEditingController.clear();

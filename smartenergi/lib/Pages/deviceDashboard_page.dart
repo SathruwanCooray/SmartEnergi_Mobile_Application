@@ -52,19 +52,29 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                 .child(hardwareId)
                 .child('CurrentValue');
 
-            espModuleRef.onValue.listen((event) {
+            espModuleRef.onValue.listen((event) async {
               final currentValue = event.snapshot.value as int?;
-              if (currentValue != null  && connectionState == "Connected") {
+              if (currentValue != null && connectionState == "Connected") {
                 setState(() {
                   realTimeValue = currentValue;
                   isConnected = true;
                 });
-              }else{
+
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('System-Verified-Modules')
+                      .doc('XQCTF')
+                      .update({
+                    'CurrentlyConnected': widget.deviceName.toUpperCase()
+                  });
+                } catch (e) {
+                  print('Error updating field: $e');
+                }
+              } else {
                 setState(() {
                   isConnected = false;
                   realTimeValue = realTimeStopped;
                 });
-                
               }
             });
           }
@@ -77,14 +87,27 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
     }
   }
 
+  void toggleConnection() {
+    setState(() {
+      if (connectionState == "Disconnected") {
+        connectionState = "Connected";
+      } else if (connectionState == "Connected") {
+        connectionState = "Disconnected";
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.deviceName,
+          widget.deviceName.toUpperCase(),
           style: const TextStyle(
-              fontFamily: 'Poppins', fontSize: 25, fontWeight: FontWeight.w500),
+            fontFamily: 'Poppins',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
       body: Center(
@@ -98,14 +121,12 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
             ElevatedButton(
               onPressed: () {
                 _connectToDevice();
-                if (connectionState == "Disconnected"){
-                  connectionState = "Connected";
-                }else if (connectionState == "Connected"){
-                  connectionState = "Disconnected";
-                }
+                toggleConnection();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isConnected ? const Color.fromARGB(255, 255, 0, 0) : const Color.fromARGB(255, 0, 232, 4),
+                backgroundColor: isConnected
+                    ? const Color.fromARGB(255, 255, 0, 0)
+                    : const Color.fromARGB(255, 0, 232, 4),
                 minimumSize: const Size(250, 50),
               ),
               child: Text(

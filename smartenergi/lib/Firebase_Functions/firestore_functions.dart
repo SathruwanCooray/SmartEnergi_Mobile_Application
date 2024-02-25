@@ -135,7 +135,7 @@ Future<String> addDeviceFirebase(String deviceName) async {
           if (deviceSnapshot.exists) {
             return "Name already Exists";
           } else {
-            await deviceRef.set({'random': 'random'});
+            await deviceRef.set({'Connected': false});
             return "Device $deviceName added successfully under hardware ID $hardwareId.";
           }
         } else {
@@ -199,3 +199,21 @@ Future<String> removeDeviceFirebase(String deviceName) async {
   }
 }
 
+Future<String> checkForHardwareID(String hardwareId) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final DocumentReference documentReference =
+        firestore.collection('System-Verified-Modules').doc(hardwareId);
+
+    try {
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+
+      if (documentSnapshot.exists) {
+        return 'Exists';
+      } else {
+        return 'Doesn\'t Exist';
+      }
+    } catch (e) {
+      print('Error checking for hardware ID: $e');
+      return 'Error checking for hardware ID: $e';
+    }
+  }

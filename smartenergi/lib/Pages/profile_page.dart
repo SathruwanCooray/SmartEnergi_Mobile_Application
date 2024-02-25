@@ -15,10 +15,11 @@ class _ProfilePageState extends State<ProfilePage> {
   User? user = FirebaseAuth.instance.currentUser;
   Map<String, dynamic> timer = {};
 
-  String username = ""; 
+  String username = "";
   late TimeOfDay selectedNightTimer;
-  int energyLimit = 0; 
+  int energyLimit = 0;
   String hardwareId = "";
+  bool invalidHardwareID = false;
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
         username = fetchedUsername;
         energyLimit = fetchEnergyLimit;
         hardwareId = fetchHardwareID;
-        timer = fetchTimer; 
+        timer = fetchTimer;
         selectedNightTimer = TimeOfDay(
           hour: timer['hours'] ?? 0,
           minute: timer['minutes'] ?? 0,
@@ -61,13 +62,12 @@ class _ProfilePageState extends State<ProfilePage> {
       initialTime: selectedNightTimer,
     );
     if (picked != null && picked != selectedNightTimer) {
-      addTimerToFirebase(picked); 
+      addTimerToFirebase(picked);
       setState(() {
         selectedNightTimer = picked;
       });
     }
   }
-
 
   Future<void> _selectEnergyLimit(BuildContext context) async {
     final TextEditingController limitController = TextEditingController();
@@ -131,12 +131,31 @@ class _ProfilePageState extends State<ProfilePage> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  addHardwareIDToFirebase(hardwareIdController.text);
-                  hardwareId = hardwareIdController.text;
-                });
+              onPressed: () async {
+                String result = await checkForHardwareID(hardwareIdController.text.toUpperCase());
+
+                if (result == "Exists") {
+                  invalidHardwareID = false;
+                  setState(() {
+                    addHardwareIDToFirebase(hardwareIdController.text);
+                    hardwareId = hardwareIdController.text;
+                  });
+                } else {
+                  invalidHardwareID = true;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text('Invalid Hardware ID',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                              fontSize: 20)),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
                 Navigator.of(context).pop();
+              
               },
               child: const Text('Set'),
             ),
@@ -150,202 +169,246 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
+        child: Builder(
+          builder: (BuildContext scaffoldContext) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding:
+                            const EdgeInsets.only(left: 40, top: 16, bottom: 16),
+                        child: const Text(
+                          "User Profile",
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 30,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16.0),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Hello $username!",
+                        style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
+                      ),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 40, top: 16, bottom: 16),
-                    child: const Text(
-                      "User Profile",
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 40, fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 224, 224, 224),
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Night Timer",
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "${selectedNightTimer.hour}:${selectedNightTimer.minute}",
+                                style: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            _selectNightTimer(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.black,
+                          ),
+                          child: const Text(
+                            "Select Time",
+                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 224, 224, 224),
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Energy Limit Picker",
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "$energyLimit KwH",
+                                style: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            _selectEnergyLimit(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.black,
+                          ),
+                          child: const Text(
+                            "Set Limit",
+                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 224, 224, 224),
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(255, 0, 0, 0)
+                                    .withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Hardware IDE Picker",
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                hardwareId,
+                                style: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            _selectHardwareId(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.black,
+                          ),
+                          child: const Text(
+                            "Set Hardware ID",
+                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(),
+                      ],
                     ),
                   ),
                 ],
               ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 30,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Hello $username!",
-                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 30, fontWeight: FontWeight.w500, color: Colors.white),
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 224, 224),
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Night Timer",
-                            style: TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 8),
-                          
-                          Text("${selectedNightTimer.hour}:${selectedNightTimer.minute}", style: const TextStyle(fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600),),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        _selectNightTimer(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.black,
-                      ),
-                      child: const Text("Select Time", style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),),
-                    ),
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 224, 224),
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Energy Limit Picker",
-                            style: TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 8),
-                          Text("$energyLimit KwH",style: const TextStyle(fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600),),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        _selectEnergyLimit(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.black,
-                      ),
-                      child: const Text("Set Limit", style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),),
-                    ),
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 224, 224),
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: const Offset(0, 0),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Hardware IDE Picker",
-                            style: TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(hardwareId, style: const TextStyle(fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600),),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        _selectHardwareId(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.black,
-                      ),
-                      child: const Text("Set Hardware ID", style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),),
-                    ),
-                  ],
-                ),
-              ),
-
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
