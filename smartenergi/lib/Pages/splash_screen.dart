@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartenergi/Pages/signup_page.dart';
+import 'package:smartenergi/Pages/LoginSignup_page.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 6), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const SignUpPage()),
+        MaterialPageRoute(builder: (context) => const loginSignupPage()),
       );
     });
   }
