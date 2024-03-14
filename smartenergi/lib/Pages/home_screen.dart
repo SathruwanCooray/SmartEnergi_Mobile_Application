@@ -1,8 +1,8 @@
 import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartenergi/Pages/FocusMode_Page.dart';
 import 'package:smartenergi/Pages/deviceDashboard_page.dart';
 import 'package:smartenergi/Pages/profile_page.dart';
 import 'package:smartenergi/Pages/signin_page.dart';
@@ -18,14 +18,30 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<String> devices = [];
   TextEditingController _textEditingController = TextEditingController();
-  int selectedIndex =
-      0; // Created a Varriable _selectedIndex for navigation bar
+  int selectedIndex = 0; // Created a Varriable for navigation bar
 
   Void? onIteamTapped(int index) {
     setState(() {
       selectedIndex = index;
     });
-    return null;
+    switch (selectedIndex) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FocusModePage(),
+          ),
+        );
+        break;
+    } // created a switch case to navigation bar
   }
 
   @override
