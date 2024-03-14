@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +18,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<String> devices = [];
   TextEditingController _textEditingController = TextEditingController();
+  int selectedIndex =
+      0; // Created a Varriable _selectedIndex for navigation bar
+
+  Void? onIteamTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    return null;
+  }
 
   @override
   void initState() {
@@ -166,6 +177,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+
+      // Created the navigation bar
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.layers), label: 'modes'),
+        ],
+        currentIndex: selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: onIteamTapped,
+      ),
     );
   }
 
@@ -199,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       duration: Duration(seconds: 2),
                     ),
                   );
-
                 } else {
                   await _addDevice(deviceName);
                   _textEditingController.clear();
