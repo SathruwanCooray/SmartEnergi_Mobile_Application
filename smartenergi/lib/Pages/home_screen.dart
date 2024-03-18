@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController _textEditingController = TextEditingController();
   int selectedIndex = 0; // Created a Varriable for navigation bar
 
-  Void? onIteamTapped(int index) {
+  Void? onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
     });
@@ -41,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
         break;
-    } // created a switch case to navigation bar
+    }
+    return null;
   }
 
   @override
@@ -133,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const Text(
                           'SMARTENERGI',
                           style: TextStyle(
+                            fontFamily: 'Poppins',
                             color: Color.fromARGB(255, 0, 0, 0),
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
@@ -202,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
-        onTap: onIteamTapped,
+        onTap: onItemTapped,
       ),
     );
   }

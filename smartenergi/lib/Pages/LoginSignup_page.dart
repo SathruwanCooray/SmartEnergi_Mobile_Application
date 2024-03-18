@@ -17,6 +17,19 @@ class _loginSignupPageState extends State<loginSignupPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset("Assets/SmartEnergiLogo.png", width: 200, height: 200),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'SMARTENERGI',
+              style: TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20,),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -26,7 +39,8 @@ class _loginSignupPageState extends State<loginSignupPage> {
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Adjust roundness here
+                  borderRadius:
+                      BorderRadius.circular(10), // Adjust roundness here
                 ),
                 minimumSize: Size(300, 60), // Adjust width and height here
                 backgroundColor: Colors.black, // Set button color to black
@@ -44,11 +58,15 @@ class _loginSignupPageState extends State<loginSignupPage> {
             const SizedBox(height: 30), // Adding some space between buttons
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SignInPage()));
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Adjust roundness here
+                  borderRadius:
+                      BorderRadius.circular(10), // Adjust roundness here
                 ),
                 minimumSize: Size(300, 60), // Adjust width and height here
                 backgroundColor: Colors.black, // Set button color to black
