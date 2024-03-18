@@ -11,25 +11,25 @@ SmartEnergi is a second-year group project developed by Group CS-100 at the IIT 
   
   Users can monitor their device energy consumption in real-time, providing immediate insights into usage patterns.
 
-- **Monthly Reports**:
-  - Assigned to: Vishwa
-  
-  SmartEnergi generates monthly reports summarizing energy consumption trends and providing actionable insights for users to optimize their energy usage.
-
-- **Comparison Graphs**:
-  - Assigned to: Vishwa
-  
-  The application offers graphical representations for comparing energy consumption over different time periods, allowing users to identify trends and make informed decisions.
-
-- **Push Notifications**:
-  - Assigned to: Induwara
+- **Energy Limit Notifications**:
+  - Assigned to: Sineth
   
   SmartEnergi sends push notifications to users when their energy consumption exceeds predefined limits, enabling them to take corrective actions promptly.
+
+- **Night Time Activity Monitoring**:
+  - Assigned to: Induwara
+  
+  SmartEnergi monitors device activity after a given time set by the user and sends notifications if the device remains active during that period.
 
 - **Machine Learning Component**:
   - Assigned to: Ruvindu
   
   Utilizing machine learning algorithms, the application predicts future energy consumption based on historical data, empowering users to plan and manage their energy usage more effectively.
+
+- **Comparison Graphs**:
+  - Assigned to: Vishwa
+  
+  The application offers graphical representations for comparing energy consumption over different time periods, allowing users to identify trends and make informed decisions.
 
 ## Current Contributors
 
@@ -37,7 +37,7 @@ SmartEnergi is a second-year group project developed by Group CS-100 at the IIT 
   - Number of Commits: 3
   
 - **Sathruwan**
-  - Number of Commits: 7
+  - Number of Commits: 8
 
 ## Contribution Guidelines
 
