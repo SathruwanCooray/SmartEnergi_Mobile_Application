@@ -35,32 +35,28 @@ void setup() {
 
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
-
   while (WiFi.status() != WL_CONNECTED) {
     delay(250);
     Serial.print(".");
   }
+  Serial.println("\nConnected to Wi-Fi");
 
-  Serial.println("");
-  Serial.println("Connected to Wi-Fi");
-
-  // Firebase setup
+  // Initialize Firebase
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
 
+  // Sign up with Firebase admin credentials
   if (Firebase.signUp(&config, &auth, serviceAccountClientEmail, serviceAccountPrivateKey)) {
     Serial.println("Firebase admin signup successful");
     signupOK = true;
-
     config.token_status_callback = tokenStatusCallback;
     Firebase.begin(&config, &auth);
     Firebase.reconnectWiFi(true);
   } else {
+    // Authenticate with Firebase user credentials
     auth.user.email = serviceAccountClientEmail;
     auth.user.password = serviceAccountPrivateKey;
-
     Firebase.begin(&config, &auth);
-
     unsigned long start = millis();
     while (!Firebase.ready()) {
       if (millis() - start > 100000000) {
@@ -69,7 +65,6 @@ void setup() {
       }
       delay(500);
     }
-
     if (Firebase.ready()) {
       Serial.println("Firebase authenticated successfully");
       authOK = true;
@@ -78,57 +73,59 @@ void setup() {
     }
   }
 
-  Serial.println("\nWaiting for Internet time");
-
-  while(!time(nullptr)){
-     Serial.print("*");
-     delay(1000);
-  }
-  Serial.println("\nTime response....OK");
+  // Synchronize time with NTP server
   synchronizeTime();
-
 }
 
 float x = 0;
 
 void loop() {
-  Serial.println("Loop started");
-    if (isFirstIteration) {
-    // Skip the first iteration
-    isFirstIteration = false;
-    return;
-  }
-
   // Your loop code here
   // This loop will print the current time every second
-  time_t now = time(nullptr);
-  struct tm* p_tm = localtime(&now);
 
-    // Construct the date and time string
-  String dateTimeString = String(p_tm->tm_mday < 10 ? "0" : "") + String(p_tm->tm_mday) + "-" + 
-                            String((p_tm->tm_mon + 1) < 10 ? "0" : "") + String(p_tm->tm_mon + 1) + "-" + 
-                            String(p_tm->tm_year + 1900) + " " +
-                            String((p_tm->tm_hour % 12) < 10 ? "0" : "") + String(p_tm->tm_hour % 12) + ":" + // 12-hour format
-                            (p_tm->tm_min < 10 ? "0" : "") + String(p_tm->tm_min) + ":" +
-                            (p_tm->tm_sec < 10 ? "0" : "") + String(p_tm->tm_sec) + " " +
-                            (p_tm->tm_hour < 12 ? "AM" : "PM"); // AM/PM indicator
+  if (authOK || signupOK) {
+    // Fetch data from Firebase RTDB
+    if (Firebase.RTDB.getFloat(&fbdo, "/ESPmodules/XQCTF/Index")) {
+      Serial.println("Data fetched successfully");
+      int fetchedValue = fbdo.floatData();
+      Serial.println("Fetched value: " + String(fetchedValue));
 
-    // Check if Firebase is ready and authentication is successful
-    if (Firebase.ready() && (signupOK || authOK)) {
-      Serial.println("Firebase is ready, attempting to get data...");
+      // Increment fetched value
+      fetchedValue++;
 
-      // Get Which device is connected
+      // Fetch device information from Firestore
       if (Firebase.Firestore.getDocument(&fbdo, "smartenergi-7425c", "", "System-Verified-Modules/XQCTF")) {
         Serial.println("Document fetched successfully");
 
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, fbdo.payload());
-
         String currentlyConnected = doc["fields"]["CurrentlyConnected"]["stringValue"];
         Serial.print("CurrentlyConnected: ");
         Serial.println(currentlyConnected);
 
-        // Show the value in the real-time database
+        // Construct path with device information and current timestamp
+        String dateTimeString = getCurrentDateTimeString();
+        String paddedFetchedValue;
+        if (fetchedValue < 10) {
+          paddedFetchedValue = "0000000" + String(fetchedValue); // Pad with seven leading zeros
+        } else if (fetchedValue < 100) {
+          paddedFetchedValue = "000000" + String(fetchedValue); // Pad with six leading zeros
+        } else if (fetchedValue < 1000) {
+          paddedFetchedValue = "00000" + String(fetchedValue); // Pad with five leading zeros
+        } else if (fetchedValue < 10000) {
+          paddedFetchedValue = "0000" + String(fetchedValue); // Pad with four leading zeros
+        } else if (fetchedValue < 100000) {
+          paddedFetchedValue = "000" + String(fetchedValue); // Pad with three leading zeros
+        } else if (fetchedValue < 1000000) {
+          paddedFetchedValue = "00" + String(fetchedValue); // Pad with two leading zeros
+        } else if (fetchedValue < 10000000) {
+          paddedFetchedValue = "0" + String(fetchedValue); // Pad with one leading zero
+        } else {
+          paddedFetchedValue = String(fetchedValue); // No padding needed
+        }
+        String devicePath = "ESPmodules/XQCTF/Devices/" + currentlyConnected + "/" + paddedFetchedValue + "-" + dateTimeString;
+
+        // Send data to Firebase RTDB
         if (Firebase.RTDB.setFloat(&fbdo, "ESPmodules/XQCTF/CurrentValue", x)) {
           Serial.println("Data sent successfully");
         } else {
@@ -136,14 +133,19 @@ void loop() {
           Serial.println(fbdo.errorReason());
         }
 
-        // Construct the path with the retrieved device name
-        String devicePath = "ESPmodules/XQCTF/Devices/" + currentlyConnected + "/" + dateTimeString;
-
-        // Send data to Firebase
+        // Send data to specific device path
         if (Firebase.RTDB.setFloat(&fbdo, devicePath.c_str(), x)) {
           Serial.println("Data sent successfully");
         } else {
           Serial.println("Failed to send data");
+          Serial.println(fbdo.errorReason());
+        }
+
+        // Update the index value in Firebase
+        if (Firebase.RTDB.setFloat(&fbdo, "/ESPmodules/XQCTF/Index", fetchedValue)) {
+          Serial.println("Index updated successfully");
+        } else {
+          Serial.println("Failed to update index");
           Serial.println(fbdo.errorReason());
         }
       } else {
@@ -151,21 +153,36 @@ void loop() {
         Serial.println(fbdo.errorReason());
       }
 
-      delay(1000); // Wait 1 second before next iteration
-      x++; // Increment x for next iteration
-    } 
+      delay(1000);
+      x++;
+       // Wait 1 second before next iteration
+    }
+  }
 }
 
+// Function to synchronize time with NTP server
 void synchronizeTime() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2);
   Serial.println("\nWaiting for Internet time");
-
   time_t now = time(nullptr);
   while (now < 24 * 3600) {
     delay(500);
     Serial.print(".");
     now = time(nullptr);
   }
-
   Serial.println("\nTime synchronized");
+}
+
+// Function to get current date-time string
+String getCurrentDateTimeString() {
+  time_t now = time(nullptr);
+  struct tm* p_tm = localtime(&now);
+  String dateTimeString = String((p_tm->tm_mday < 10 ? "0" : "") + String(p_tm->tm_mday)) + "-" + 
+                          String((p_tm->tm_mon + 1) < 10 ? "0" : "") + String(p_tm->tm_mon + 1) + "-" + 
+                          String(p_tm->tm_year + 1900) + " " +
+                          String((p_tm->tm_hour % 12) < 10 ? "0" : "") + String(p_tm->tm_hour % 12) + ":" + // 12-hour format
+                          (p_tm->tm_min < 10 ? "0" : "") + String(p_tm->tm_min) + ":" +
+                          (p_tm->tm_sec < 10 ? "0" : "") + String(p_tm->tm_sec) + " " +
+                          (p_tm->tm_hour < 12 ? "AM" : "PM");
+  return dateTimeString;
 }
