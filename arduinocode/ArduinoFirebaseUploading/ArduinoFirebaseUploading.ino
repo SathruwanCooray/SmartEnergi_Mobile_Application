@@ -5,8 +5,8 @@
 #include "addons/RTDBHelper.h"
 #include <time.h>
 
-#define API_KEY "AIzaSyC1KG32Ki-Mqkk2Hs1ZiJGbVX0MFJUvjbY"
-#define DATABASE_URL "https://smartenergi-7425c-default-rtdb.firebaseio.com/"
+#define API_KEY "AIzaSyAygTXVYk-30pA_9-Kar_CZxlxiCjsrzzc"
+#define DATABASE_URL "https://smartenergi-56048-default-rtdb.firebaseio.com/"
 
 FirebaseData fbdo;
 FirebaseAuth auth;
@@ -25,8 +25,8 @@ const char *ssid = "SLT_FIBRE 256";
 const char *password = "Shan1234";
 
 // Service account credentials
-const char *serviceAccountClientEmail = "firebase-adminsdk-32tt8@smartenergi-7425c.iam.gserviceaccount.com";
-const char *serviceAccountPrivateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDF+9FhBwp+/bKw\nLWLmzoZn5SDrF1GGGojpPxTsgp2nG3WHndNR5QrrS9Mn1JvUjDTZnOaIHoXb8dCP\nNeipS5pCoYede/fdW1iMwQb7w3wcGpC+TVbDEIACBF/+NMPKUM5HzHq/VpV79sNK\nBn3S5PuCNIse3fR5e/D/CCvqSA1EW3rbWACzTy2xVAN5vT6LpWZYI/fAMOjrJvuG\n77ENopgdEM1t6Sz9wEObIRag/5Y5zJ4yBwUE37Qf26+/JHGOS5pgaDRf7iputYEG\n9cxG8EK/zsnrpP+wj7vQ+XKHVh2J03IblMPp+3Q/JAm4T3uSa6gEOZ+eXd2CHG6j\n1+3Mu9EBAgMBAAECggEAP9DiFhDjcLiM0t3mTbhPOYjxGeYLyJqf+/Lx5yRY9cbT\nlPGp7nFSGjL4LpQI4LOKy4QYCNMx2Ynx7F93ja5JXGXdpUUSyZ6KheAoRJmn1RU5\nB6Y9K6YTZNMNMA7I91shiqIeBLO/flQ1cZRzFTnq2fbeywXHKitprILxSNSNtjTn\nN4kIqEaJnnebiYsrvuCbXEAOl0K+oafLsYRZoBXihvoz3AIldU4QyvSbDgQmYoYF\nxxdbNpgDU8tTQhBWvN/eTA5uBZ3joyDOQ3DNnF2CGMGdqtpqLmqqMOFLlfhTVSQ+\n/sRjy1TzTQoWRUbRt0VYGytna41Fautx6tdBfnpTkwKBgQDrUuP+cJpKdnxx1ETu\nRHja8v5Q7Ost1RozNSBk47LfyPB4WhNB/828rWyykWApewTN87LJKt1DAohbpCtW\nlSiNv4oPitHNwYHwDKeLxjQWhKvkkF4n7RXuSQQbwEcehR6mV3yGv8MAIlsueGDc\n67bT4XmJRksxQH/pNJbCBpK/TwKBgQDXYQpTc57/IHs2eeByCjmixIJztgtTjUSQ\n/oYhKu4VKLPUhT9sUpVmd/FuqdFWKPopp0GuuxLxPCvvsRXaaJpQEDw2uyp3C+c1\nSQPvEEp4XoCASyn86k/Slw7vFl0tA9nVu8CdSxPE1CWaRXN4ZcxaN1JT6D73gruH\nWhflndHWrwKBgQCw8jgrt4Hc4fE7KnDWdLgncrXWJf/FC8tSm+0Kz8hNy2s+JAT9\nCJsr93+XWgbjyfPX5RoXd9q+K2Za+jv4M9o1k8P9YdXWkF3jIbDOQjAiiooyKHgU\nL4rhDRhAwbj4cwKT847YR9MaA7tqWuwC0l88PPvFRA0AMM69jWSa6pRnswKBgCEk\noLco0q3F7M/8P0qtQiNHBCAUQnfwBD4fvLo75flBkzK/8nuT1cO372ItJbaRhbWF\nNHlT9l1C+ivfX1KFyEFLzkhJ0wYQwdqUStOt+Re+yx1y85ok4HWyoyytj1cPAaV/\nR+uskvU2BDdSOqurVqAHZVbeJVpnNr5kYcsG1zSnAoGAJpgeQ6rE0AKOV5SahOT/\nCpIdRQsgGNtRdKLQUvJPs2/Ovz0GxaDexZ2RqyG9V+yPaHsqnuWoOet1lzlhJms8\nZW/bKjazBBQpviR4UKCaCOyAlrOQSlfW1jNqeHMWZY45FfVVekVdLo22taIuNtM5\nbW4hu/M3hPGL9TARztQTxkU=\n-----END PRIVATE KEY-----\n";
+const char *serviceAccountClientEmail = "firebase-adminsdk-5hiwl@smartenergi-56048.iam.gserviceaccount.com";
+const char *serviceAccountPrivateKey = "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDB/6FTiBM1ylAz\nc5BKAGPdh5M1WXaOpe/y1Ro4hzXqmf5wvD+cC42Y51S129HIJJktxWNdZN0LxH3t\nmFZY0kySzyGyD+DOYoeRe3tEQIZDkN4Xwz4W2p+55U3ON8srae13WBgmD/16cHgS\ntoooSJ4u1vdwFNYwrJ+gE066Jw6ciwaZrFyC6YU3vBVXr5d2Icd+qvUPYaYN6pyk\nIkhLYTXZjJOxmqcDJlabE/mhHopNUBP8QEEk+Y01BwzpTleqKosu+Xv/95fkuF6a\nA7vvOyNxAdqe3PKbxN1lTACgfXYe28xU/VTcz8eV2/Qyo3ambpt3OCkv81Kp9csn\nQM7jgR17AgMBAAECggEAXrPEFMtqGUmccil5Z+6d0aBjx9jW69bsdh36cVrsAozP\nLUhwQuRO6LQQ4cAfvfTDxBjGI2rgD2UJ1kkV6cEreUVdHRfsNcPaizX83DolcOlQ\nycfZUP3DmFNscn1BFH3e2vIpw7btle4+Z2AtvHGKqrHs042Qa+1w9QtH1M7JLrhC\nJenpDTUCSWRdv7J4boIKsOwhmCCpogCnUH4SRgX05CGausLdJp4u1qG4yedfSC0N\nItt1czyd0EDF9MQk1FWvEbD9imbHxNazjijEYMB9kpvX87absI1hkqotx0INLmsk\noPahB82RQsuAeyJTleAV8e24Img1KAU3ywA0kKh73QKBgQD8iBn9qTSm9V9pwL6h\n+v+nzIcKqbNexpzSVrlbJt7FkwZh4iDHC62T+QPHshH3WZ6RePsRJw59ER+f5PY7\nFgllH7cSZY7YmkyCqJLk3agk3QVRTjEg5gRqtkMrcP0A618mGzAJqRTNKKBOTaN8\nimRc1W7VpyoNm/bFDiI4B6M0nwKBgQDEqboZoBCEiftHP+Ukot7uM1cKGkDHV92O\nsft7iQTtBBnFMKh5eIb865JvKLzDB+Mw4ulzlg2nneZgPNczXj6oBu3SpQdycp97\n7gNuH7fz1788zwlLOqqU9JSulsmQPVzVXzqICnbEBuxEaBaSkVFxWgxdkliAuAVj\nBavDCMftpQKBgQCDr3lWNGkXczbZD8CY+Sld2CLHZaz6jDl02fJ4XPGoN74JRwDu\nquFOG3lkJjCGOr6cf2j1DdfZUheaqqvYLeqiSAKQXlM6EmQ5cix/mjK3XmYKeurV\ni/zbpMWsHpRgaVzJoz3Om9QUE85cZtIM/KHPYyET2sLsK9tn8LHZY+owYwKBgGW5\nUSyuEb0szg/1qeYAZQWbAruUBsvV1CFaSLWGk0ix5U6NM6fZQyGSDGV5EeJjsw13\nYb/K7vczgpVnAv1sE0bAhsV9XVPCnGHzJE0TFQiJIT8n7CvAhbmUpU+FaW81fk5T\n+qehmfsdhZqAqKRZjGHwbRL9fs/d39NvfH/ei+ONAoGBAJiib5YRVF/07FW6BW6B\n4J+rcl4AsDeQjwtIpgoaFxxvwqbHNhW06mflVIDqY2VGXEdREYiPPB0mmbjodt9u\nxpwovH0JoOsI5FZfqo+PtdDKEZyTwgnH4GmHnHvFZ4junFn3RP24ks3U0ap66pTF\ncrQjDmYoOQsrXSimzrot3hf8\n-----END PRIVATE KEY-----\n";
 
 void synchronizeTime(); // Function prototype
 
@@ -94,7 +94,7 @@ void loop() {
       fetchedValue++;
 
       // Fetch device information from Firestore
-      if (Firebase.Firestore.getDocument(&fbdo, "smartenergi-7425c", "", "System-Verified-Modules/XQCTF")) {
+      if (Firebase.Firestore.getDocument(&fbdo, "smartenergi-56048", "", "System-Verified-Modules/XQCTF")) {
         Serial.println("Document fetched successfully");
 
         DynamicJsonDocument doc(1024);
