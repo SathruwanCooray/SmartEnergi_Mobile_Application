@@ -5,10 +5,10 @@ import 'package:smartenergi/Pages/splash_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp(options: const FirebaseOptions(
-    apiKey: "AIzaSyC1KG32Ki-Mqkk2Hs1ZiJGbVX0MFJUvjbY",
-    appId: "1:483460245150:android:26a8a48dcc031cecb7bd8f",
-    messagingSenderId: "483460245150",
-    projectId: "smartenergi-7425c"));
+    apiKey: "AIzaSyAygTXVYk-30pA_9-Kar_CZxlxiCjsrzzc",
+    appId: "1:243668481623:android:b2860e65f89ff35afb1512",
+    messagingSenderId: "243668481623",
+    projectId: "smartenergi-56048"));
   runApp(const MyApp());
 }
 

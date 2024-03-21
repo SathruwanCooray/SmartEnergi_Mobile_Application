@@ -156,7 +156,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                     const Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: Text(
-                        "Real Time Energy Consumption",
+                        "Real Time Energy Tracker",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 25,

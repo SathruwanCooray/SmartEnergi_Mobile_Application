@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "483460245150",
-    "project_id": "smartenergi-7425c",
-    "storage_bucket": "smartenergi-7425c.appspot.com"
+    "project_number": "243668481623",
+    "firebase_url": "https://smartenergi-56048-default-rtdb.firebaseio.com",
+    "project_id": "smartenergi-56048",
+    "storage_bucket": "smartenergi-56048.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:483460245150:android:26a8a48dcc031cecb7bd8f",
+        "mobilesdk_app_id": "1:243668481623:android:b2860e65f89ff35afb1512",
         "android_client_info": {
           "package_name": "com.example.smartenergi"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC1KG32Ki-Mqkk2Hs1ZiJGbVX0MFJUvjbY"
+          "current_key": "AIzaSyAygTXVYk-30pA_9-Kar_CZxlxiCjsrzzc"
         }
       ],
       "services": {
