@@ -37,7 +37,10 @@ SmartEnergi is a second-year group project developed by Group CS-100 at the IIT 
   - Number of Commits: 3
   
 - **Sathruwan**
-  - Number of Commits: 8
+  - Number of Commits: 14
+  
+- **Senith**
+  - Number of Commits: 1
 
 ## Contribution Guidelines
 
