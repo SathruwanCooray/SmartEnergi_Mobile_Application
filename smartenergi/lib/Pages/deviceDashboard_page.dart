@@ -91,8 +91,11 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
     setState(() {
       if (connectionState == "Disconnected") {
         connectionState = "Connected";
+        isConnected = true; // Update isConnected when connected
       } else if (connectionState == "Connected") {
         connectionState = "Disconnected";
+        isConnected = false; // Update isConnected when disconnected
+        realTimeValue = 0;
       }
     });
   }

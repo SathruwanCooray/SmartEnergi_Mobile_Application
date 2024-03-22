@@ -4,6 +4,7 @@
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
 #include <time.h>
+#include "EmonLib.h" 
 
 #define API_KEY "AIzaSyAygTXVYk-30pA_9-Kar_CZxlxiCjsrzzc"
 #define DATABASE_URL "https://smartenergi-56048-default-rtdb.firebaseio.com/"
@@ -11,6 +12,7 @@
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
+EnergyMonitor emon1;
 bool authOK = false;
 bool signupOK = false;
 
@@ -32,6 +34,8 @@ void synchronizeTime(); // Function prototype
 
 void setup() {
   Serial.begin(9600);
+
+  emon1.current(0, 111.1);  
 
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
@@ -77,11 +81,18 @@ void setup() {
   synchronizeTime();
 }
 
-float x = 0;
-
 void loop() {
   // Your loop code here
   // This loop will print the current time every second
+
+  double Irms = emon1.calcIrms(1480); 
+
+   // Calculate Irms only. Irms = Current Root Mean Square value = Measured current
+  
+  Serial.print(Irms*230.0);	       // Apparent power.
+  Serial.print(" ");                   // Apparent power is Irms * Vrms (Voltage Root Mean Square value, which is 230 for Arduinos)
+  Serial.println(Irms);		
+  delay(1000);   
 
   if (authOK || signupOK) {
     // Fetch data from Firebase RTDB
@@ -126,7 +137,7 @@ void loop() {
         String devicePath = "ESPmodules/XQCTF/Devices/" + currentlyConnected + "/" + paddedFetchedValue + "-" + dateTimeString;
 
         // Send data to Firebase RTDB
-        if (Firebase.RTDB.setFloat(&fbdo, "ESPmodules/XQCTF/CurrentValue", x)) {
+        if (Firebase.RTDB.setFloat(&fbdo, "ESPmodules/XQCTF/CurrentValue", Irms*230)) {
           Serial.println("Data sent successfully");
         } else {
           Serial.println("Failed to send data");
@@ -134,7 +145,7 @@ void loop() {
         }
 
         // Send data to specific device path
-        if (Firebase.RTDB.setFloat(&fbdo, devicePath.c_str(), x)) {
+        if (Firebase.RTDB.setFloat(&fbdo, devicePath.c_str(), Irms*230)) {
           Serial.println("Data sent successfully");
         } else {
           Serial.println("Failed to send data");
@@ -154,7 +165,6 @@ void loop() {
       }
 
       delay(1000);
-      x++;
        // Wait 1 second before next iteration
     }
   }
@@ -186,3 +196,5 @@ String getCurrentDateTimeString() {
                           (p_tm->tm_hour < 12 ? "AM" : "PM");
   return dateTimeString;
 }
+
+ 
