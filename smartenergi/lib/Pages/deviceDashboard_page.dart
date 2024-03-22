@@ -88,16 +88,38 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
   }
 
   void toggleConnection() {
-    setState(() {
-      if (connectionState == "Disconnected") {
+    if (connectionState == "Disconnected") {
+      setState(() {
         connectionState = "Connected";
         isConnected = true; // Update isConnected when connected
-      } else if (connectionState == "Connected") {
+      });
+
+      // Perform Firestore update
+      FirebaseFirestore.instance
+          .collection('System-Verified-Modules')
+          .doc('XQCTF')
+          .update({
+        'CurrentlyConnected': widget.deviceName.toUpperCase()
+      }).catchError((error) {
+        print('Error updating field: $error');
+      });
+    } else if (connectionState == "Connected") {
+      setState(() {
         connectionState = "Disconnected";
         isConnected = false; // Update isConnected when disconnected
         realTimeValue = 0;
-      }
-    });
+      });
+
+      // Perform Firestore update
+      FirebaseFirestore.instance
+          .collection('System-Verified-Modules')
+          .doc('XQCTF')
+          .update({
+        'CurrentlyConnected': "NONE"
+      }).catchError((error) {
+        print('Error updating field: $error');
+      });
+    }
   }
 
   @override
@@ -171,7 +193,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                       height: 10,
                     ),
                     Text(
-                      "$realTimeValue Kwh",
+                      "${realTimeValue.toStringAsFixed(2)} Kwh",
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 50,

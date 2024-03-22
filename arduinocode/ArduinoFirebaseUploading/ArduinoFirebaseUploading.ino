@@ -113,50 +113,54 @@ void loop() {
         Serial.print("CurrentlyConnected: ");
         Serial.println(currentlyConnected);
 
-        // Construct path with device information and current timestamp
-        String dateTimeString = getCurrentDateTimeString();
-        String paddedFetchedValue;
-        if (fetchedValue < 10) {
-          paddedFetchedValue = "0000000" + String(fetchedValue); // Pad with seven leading zeros
-        } else if (fetchedValue < 100) {
-          paddedFetchedValue = "000000" + String(fetchedValue); // Pad with six leading zeros
-        } else if (fetchedValue < 1000) {
-          paddedFetchedValue = "00000" + String(fetchedValue); // Pad with five leading zeros
-        } else if (fetchedValue < 10000) {
-          paddedFetchedValue = "0000" + String(fetchedValue); // Pad with four leading zeros
-        } else if (fetchedValue < 100000) {
-          paddedFetchedValue = "000" + String(fetchedValue); // Pad with three leading zeros
-        } else if (fetchedValue < 1000000) {
-          paddedFetchedValue = "00" + String(fetchedValue); // Pad with two leading zeros
-        } else if (fetchedValue < 10000000) {
-          paddedFetchedValue = "0" + String(fetchedValue); // Pad with one leading zero
-        } else {
-          paddedFetchedValue = String(fetchedValue); // No padding needed
-        }
-        String devicePath = "ESPmodules/XQCTF/Devices/" + currentlyConnected + "/" + paddedFetchedValue + "-" + dateTimeString;
+        if(currentlyConnected == "NONE"){
+          break;
+        }else{
+          // Construct path with device information and current timestamp
+          String dateTimeString = getCurrentDateTimeString();
+          String paddedFetchedValue;
+          if (fetchedValue < 10) {
+            paddedFetchedValue = "0000000" + String(fetchedValue); // Pad with seven leading zeros
+          } else if (fetchedValue < 100) {
+            paddedFetchedValue = "000000" + String(fetchedValue); // Pad with six leading zeros
+          } else if (fetchedValue < 1000) {
+            paddedFetchedValue = "00000" + String(fetchedValue); // Pad with five leading zeros
+          } else if (fetchedValue < 10000) {
+            paddedFetchedValue = "0000" + String(fetchedValue); // Pad with four leading zeros
+          } else if (fetchedValue < 100000) {
+            paddedFetchedValue = "000" + String(fetchedValue); // Pad with three leading zeros
+          } else if (fetchedValue < 1000000) {
+            paddedFetchedValue = "00" + String(fetchedValue); // Pad with two leading zeros
+          } else if (fetchedValue < 10000000) {
+            paddedFetchedValue = "0" + String(fetchedValue); // Pad with one leading zero
+          } else {
+            paddedFetchedValue = String(fetchedValue); // No padding needed
+          }
+          String devicePath = "ESPmodules/XQCTF/Devices/" + currentlyConnected + "/" + paddedFetchedValue + "-" + dateTimeString;
 
-        // Send data to Firebase RTDB
-        if (Firebase.RTDB.setFloat(&fbdo, "ESPmodules/XQCTF/CurrentValue", Irms*230)) {
-          Serial.println("Data sent successfully");
-        } else {
-          Serial.println("Failed to send data");
-          Serial.println(fbdo.errorReason());
-        }
+          // Send data to Firebase RTDB
+          if (Firebase.RTDB.setFloat(&fbdo, "ESPmodules/XQCTF/CurrentValue", Irms*230)) {
+            Serial.println("Data sent successfully");
+          } else {
+            Serial.println("Failed to send data");
+            Serial.println(fbdo.errorReason());
+          }
 
-        // Send data to specific device path
-        if (Firebase.RTDB.setFloat(&fbdo, devicePath.c_str(), Irms*230)) {
-          Serial.println("Data sent successfully");
-        } else {
-          Serial.println("Failed to send data");
-          Serial.println(fbdo.errorReason());
-        }
+          // Send data to specific device path
+          if (Firebase.RTDB.setFloat(&fbdo, devicePath.c_str(), Irms*230)) {
+            Serial.println("Data sent successfully");
+          } else {
+            Serial.println("Failed to send data");
+            Serial.println(fbdo.errorReason());
+          }
 
-        // Update the index value in Firebase
-        if (Firebase.RTDB.setFloat(&fbdo, "/ESPmodules/XQCTF/Index", fetchedValue)) {
-          Serial.println("Index updated successfully");
-        } else {
-          Serial.println("Failed to update index");
-          Serial.println(fbdo.errorReason());
+          // Update the index value in Firebase
+          if (Firebase.RTDB.setFloat(&fbdo, "/ESPmodules/XQCTF/Index", fetchedValue)) {
+            Serial.println("Index updated successfully");
+          } else {
+            Serial.println("Failed to update index");
+            Serial.println(fbdo.errorReason());
+          }
         }
       } else {
         Serial.println("Failed to get document");
