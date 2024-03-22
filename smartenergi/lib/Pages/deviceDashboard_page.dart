@@ -13,8 +13,8 @@ class DeviceDashboard extends StatefulWidget {
 }
 
 class _DeviceDashboardState extends State<DeviceDashboard> {
-  int realTimeValue = 0;
-  int realTimeStopped = 0;
+  double realTimeValue = 0;
+  double realTimeStopped = 0;
   String connectionState = "Disconnected";
   bool isConnected = false;
   late String hardwareId;
@@ -53,8 +53,8 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                 .child('CurrentValue');
 
             espModuleRef.onValue.listen((event) async {
-              final currentValue = event.snapshot.value as int?;
-              if (currentValue != null && connectionState == "Connected") {
+              final currentValue = event.snapshot.value as double;
+              if (connectionState == "Connected") {
                 setState(() {
                   realTimeValue = currentValue;
                   isConnected = true;

@@ -91,8 +91,7 @@ void loop() {
   
   Serial.print(Irms*230.0);	       // Apparent power.
   Serial.print(" ");                   // Apparent power is Irms * Vrms (Voltage Root Mean Square value, which is 230 for Arduinos)
-  Serial.println(Irms);		
-  delay(1000);   
+  Serial.println(Irms);		   
 
   if (authOK || signupOK) {
     // Fetch data from Firebase RTDB
@@ -163,8 +162,6 @@ void loop() {
         Serial.println("Failed to get document");
         Serial.println(fbdo.errorReason());
       }
-
-      delay(1000);
        // Wait 1 second before next iteration
     }
   }
