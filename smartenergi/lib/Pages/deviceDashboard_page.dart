@@ -204,6 +204,88 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                 ),
               ),
             ),
+             const SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: 390,
+              height: 175,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(255, 227, 227, 227),
+              ),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Real Time Current Flow",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "${(realTimeValue/230).toStringAsFixed(2)} A",
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 50,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),const SizedBox(
+              height: 20,
+            ),
+            Container(
+              width: 390,
+              height: 175,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(255, 227, 227, 227),
+              ),
+              child: const Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        " Fixed Voltage",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "230",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 50,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+             const SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),
