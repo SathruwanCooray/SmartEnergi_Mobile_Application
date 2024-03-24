@@ -46,9 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
         energyLimit = fetchEnergyLimit;
         hardwareId = fetchHardwareID;
         timer = fetchTimer;
+        // Parse the 'minutes' string to an integer before setting TimeOfDay
         selectedNightTimer = TimeOfDay(
           hour: timer['hours'] ?? 0,
-          minute: timer['minutes'] ?? 0,
+          minute: int.parse(timer['minutes'] ?? '0'), // Parse to int
         );
       });
     } catch (error) {
@@ -132,7 +133,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               onPressed: () async {
-                String result = await checkForHardwareID(hardwareIdController.text.toUpperCase());
+                String result = await checkForHardwareID(
+                    hardwareIdController.text.toUpperCase());
 
                 if (result == "Exists") {
                   invalidHardwareID = false;
@@ -155,7 +157,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }
                 Navigator.of(context).pop();
-              
               },
               child: const Text('Set'),
             ),
@@ -188,8 +189,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Container(
-                        padding:
-                            const EdgeInsets.only(left: 40, top: 16, bottom: 16),
+                        padding: const EdgeInsets.only(
+                            left: 40, top: 16, bottom: 16),
                         child: const Text(
                           "User Profile",
                           style: TextStyle(
@@ -277,7 +278,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: const Text(
                             "Select Time",
-                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: 'Poppins'),
                           ),
                         ),
                       ],
@@ -333,7 +335,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: const Text(
                             "Set Limit",
-                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: 'Poppins'),
                           ),
                         ),
                       ],
@@ -390,7 +393,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: const Text(
                             "Set Hardware ID",
-                            style: TextStyle(fontSize: 16, fontFamily: 'Poppins'),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: 'Poppins'),
                           ),
                         ),
                       ],

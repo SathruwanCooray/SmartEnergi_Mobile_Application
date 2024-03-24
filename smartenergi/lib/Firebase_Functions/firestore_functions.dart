@@ -2,21 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-void addDataToFirestore(String hardwareID, int energyLimit, TimeOfDay nighttimer,String userName) async {
+void addDataToFirestore(String hardwareID, int energyLimit,
+    TimeOfDay nighttimer, String userName) async {
   User? user = FirebaseAuth.instance.currentUser;
 
   if (user != null) {
-    CollectionReference collectionReference = FirebaseFirestore.instance.collection('User-Settings');
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('User-Settings');
 
-    String documentId = user.uid; 
+    String documentId = user.uid;
+
+    // Format minutes to always have two digits
+    String minutesFormatted = nighttimer.minute.toString().padLeft(2, '0');
 
     Map<String, dynamic> timeMap = {
       'hours': nighttimer.hour,
-      'minutes': nighttimer.minute,
+      'minutes': minutesFormatted,
     };
 
     Map<String, dynamic> data = {
-      'Username' : userName,
+      'Username': userName,
       'Hardware_ID': hardwareID,
       'Energy_Limit': energyLimit,
       'Timer': timeMap,
@@ -37,7 +42,8 @@ void addEnergyLimitToFirebase(int energyLimit) async {
 
   if (user != null) {
     try {
-      CollectionReference userSettings = FirebaseFirestore.instance.collection('User-Settings');
+      CollectionReference userSettings =
+          FirebaseFirestore.instance.collection('User-Settings');
 
       DocumentSnapshot userDocument = await userSettings.doc(user.uid).get();
 
@@ -61,7 +67,8 @@ void addHardwareIDToFirebase(String hardwareID) async {
 
   if (user != null) {
     try {
-      CollectionReference userSettings = FirebaseFirestore.instance.collection('User-Settings');
+      CollectionReference userSettings =
+          FirebaseFirestore.instance.collection('User-Settings');
 
       DocumentSnapshot userDocument = await userSettings.doc(user.uid).get();
 
@@ -85,13 +92,17 @@ void addTimerToFirebase(TimeOfDay timer) async {
 
   if (user != null) {
     try {
-      CollectionReference userSettings = FirebaseFirestore.instance.collection('User-Settings');
+      CollectionReference userSettings =
+          FirebaseFirestore.instance.collection('User-Settings');
 
       DocumentSnapshot userDocument = await userSettings.doc(user.uid).get();
 
+      // Format minutes to always have two digits
+      String minutesFormatted = timer.minute.toString().padLeft(2, '0');
+
       Map<String, dynamic> timeMap = {
         'hours': timer.hour,
-        'minutes': timer.minute,
+        'minutes': minutesFormatted,
       };
 
       if (userDocument.exists) {
@@ -116,19 +127,24 @@ Future<String> addDeviceFirebase(String deviceName) async {
     String userUid = user.uid;
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final CollectionReference userSettings = firestore.collection('User-Settings');
+    final CollectionReference userSettings =
+        firestore.collection('User-Settings');
     final CollectionReference espDevices = firestore.collection("ESP-Devices");
 
     try {
       DocumentSnapshot userSnapshot = await userSettings.doc(userUid).get();
 
       if (userSnapshot.exists) {
-        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? userData =
+            userSnapshot.data() as Map<String, dynamic>?;
 
         if (userData != null && userData.containsKey('Hardware_ID')) {
           String hardwareId = userData['Hardware_ID'];
 
-          DocumentReference deviceRef = espDevices.doc(hardwareId).collection('Devices').doc(deviceName.toUpperCase());
+          DocumentReference deviceRef = espDevices
+              .doc(hardwareId)
+              .collection('Devices')
+              .doc(deviceName.toUpperCase());
 
           // Check if the device with the same name already exists
           DocumentSnapshot deviceSnapshot = await deviceRef.get();
@@ -160,19 +176,24 @@ Future<String> removeDeviceFirebase(String deviceName) async {
     String userUid = user.uid;
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final CollectionReference userSettings = firestore.collection('User-Settings');
+    final CollectionReference userSettings =
+        firestore.collection('User-Settings');
     final CollectionReference espDevices = firestore.collection("ESP-Devices");
 
     try {
       DocumentSnapshot userSnapshot = await userSettings.doc(userUid).get();
 
       if (userSnapshot.exists) {
-        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? userData =
+            userSnapshot.data() as Map<String, dynamic>?;
 
         if (userData != null && userData.containsKey('Hardware_ID')) {
           String hardwareId = userData['Hardware_ID'];
 
-          DocumentReference deviceRef = espDevices.doc(hardwareId).collection('Devices').doc(deviceName.toUpperCase());
+          DocumentReference deviceRef = espDevices
+              .doc(hardwareId)
+              .collection('Devices')
+              .doc(deviceName.toUpperCase());
 
           // Check if the device exists before attempting to remove it
           DocumentSnapshot deviceSnapshot = await deviceRef.get();
@@ -200,20 +221,20 @@ Future<String> removeDeviceFirebase(String deviceName) async {
 }
 
 Future<String> checkForHardwareID(String hardwareId) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final DocumentReference documentReference =
-        firestore.collection('System-Verified-Modules').doc(hardwareId);
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final DocumentReference documentReference =
+      firestore.collection('System-Verified-Modules').doc(hardwareId);
 
-    try {
-      DocumentSnapshot documentSnapshot = await documentReference.get();
+  try {
+    DocumentSnapshot documentSnapshot = await documentReference.get();
 
-      if (documentSnapshot.exists) {
-        return 'Exists';
-      } else {
-        return 'Doesn\'t Exist';
-      }
-    } catch (e) {
-      print('Error checking for hardware ID: $e');
-      return 'Error checking for hardware ID: $e';
+    if (documentSnapshot.exists) {
+      return 'Exists';
+    } else {
+      return 'Doesn\'t Exist';
     }
+  } catch (e) {
+    print('Error checking for hardware ID: $e');
+    return 'Error checking for hardware ID: $e';
   }
+}
