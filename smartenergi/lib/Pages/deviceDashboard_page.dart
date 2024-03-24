@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smartenergi/Firebase_Functions/local_Notification.dart';
 
 class DeviceDashboard extends StatefulWidget {
   final String deviceName;
@@ -18,6 +19,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
   String connectionState = "Disconnected";
   bool isConnected = false;
   late String hardwareId;
+  late double energyLimit;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
           Map<String, dynamic>? userData = documentSnapshot.data();
 
           if (userData != null && userData.containsKey('Hardware_ID')) {
+            energyLimit = userData['Energy_Limit'].toDouble();
             hardwareId = userData['Hardware_ID'];
 
             final espModuleRef = FirebaseDatabase.instance
@@ -54,6 +57,13 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
 
             espModuleRef.onValue.listen((event) async {
               final currentValue = event.snapshot.value as double;
+
+              if (energyLimit < currentValue) {
+                LocalNotifications.showSimpleNotification(
+                    title: "Warning: Energy Limit Exceeded", 
+                    body: "The energy limit has been exceeded. Please check your device.", 
+                    payload: "idk");
+              }
               if (connectionState == "Connected") {
                 setState(() {
                   realTimeValue = currentValue;
@@ -114,9 +124,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
       FirebaseFirestore.instance
           .collection('System-Verified-Modules')
           .doc('XQCTF')
-          .update({
-        'CurrentlyConnected': "NONE"
-      }).catchError((error) {
+          .update({'CurrentlyConnected': "NONE"}).catchError((error) {
         print('Error updating field: $error');
       });
     }
@@ -204,7 +212,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                 ),
               ),
             ),
-             const SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -233,7 +241,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                       height: 10,
                     ),
                     Text(
-                      "${(realTimeValue/230).toStringAsFixed(2)} A",
+                      "${(realTimeValue / 230).toStringAsFixed(2)} A",
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 50,
@@ -243,7 +251,8 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                   ],
                 ),
               ),
-            ),const SizedBox(
+            ),
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -283,7 +292,7 @@ class _DeviceDashboardState extends State<DeviceDashboard> {
                 ),
               ),
             ),
-             const SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

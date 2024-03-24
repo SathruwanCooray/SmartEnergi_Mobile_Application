@@ -1,8 +1,7 @@
-import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smartenergi/Pages/FocusMode_Page.dart';
 import 'package:smartenergi/Pages/deviceDashboard_page.dart';
 import 'package:smartenergi/Pages/profile_page.dart';
 import 'package:smartenergi/Pages/signin_page.dart';
@@ -20,30 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController _textEditingController = TextEditingController();
   int selectedIndex = 0; // Created a Varriable for navigation bar
 
-  Void? onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-    switch (selectedIndex) {
-      case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FocusModePage(),
-          ),
-        );
-        break;
-    }
-    return null;
-  }
 
   @override
   void initState() {
@@ -194,17 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-
-      // Created the navigation bar
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.layers), label: 'modes'),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: onItemTapped,
       ),
     );
   }
