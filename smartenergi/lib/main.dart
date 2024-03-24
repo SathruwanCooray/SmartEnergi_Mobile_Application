@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:smartenergi/Firebase_Functions/local_Notification.dart';
@@ -15,28 +14,7 @@ Future<void> main() async {
   );
   
   await LocalNotifications.init();
-  
-  Timer.periodic(const Duration(seconds: 5), (timer) {
-    checkAndDeleteNoneNode();
-  });
-  
   runApp(const MyApp());
-}
-
-Future<void> checkAndDeleteNoneNode() async {
-  DatabaseReference espModulesRef = FirebaseDatabase.instance.reference().child('ESPmodules').child('XQCTF').child('Devices');
-
-  // Listen for changes at the "NONE" node
-  espModulesRef.child('NONE').onValue.listen((event) {
-    if (event.snapshot.exists) {
-      // "NONE" node exists, delete it
-      espModulesRef.child('NONE').remove();
-      print('Deleted "NONE" node under ESPmodules/XQCTF/DEVICES.');
-    } else {
-      // "NONE" node doesn't exist
-      print('"NONE" node not found under ESPmodules/XQCTF/DEVICES.');
-    }
-  });
 }
 
 class MyApp extends StatelessWidget {

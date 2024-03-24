@@ -113,9 +113,7 @@ void loop() {
         Serial.print("CurrentlyConnected: ");
         Serial.println(currentlyConnected);
 
-        if(currentlyConnected == "NONE"){
-          break;
-        }else{
+        if(currentlyConnected != "NONE"){
           // Construct path with device information and current timestamp
           String dateTimeString = getCurrentDateTimeString();
           String paddedFetchedValue;
