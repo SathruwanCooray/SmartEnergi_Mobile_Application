@@ -4,6 +4,10 @@
 
 SmartEnergi is a second-year group project developed by Group CS-100 at the IIT affiliated by the University of Westminster. It aims to develop a smart energy application to assist users in tracking their device energy consumption effectively. The project is divided into five main features, each assigned to a member of the group.
 
+## Video Demonstration
+
+[![Watch the demo video](https://img.shields.io/badge/Watch-Demo%20Video-brightgreen)](https://www.youtube.com/watch?v=Lr2rr0XCKHc)
+
 ## Features
 
 - **Live Energy Tracking (Completed)**:
